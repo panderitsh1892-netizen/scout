@@ -1,19 +1,18 @@
-from agents import build_reader_agent , build_search_agent , writer_chain , critic_chain
+from agents import build_reader_agent, build_search_agent, writer_chain, critic_chain, extract_text
 
-def run_research_pipeline(topic : str) -> dict:
-
+def run_research_pipeline(topic: str) -> dict:
     state = {}
 
-    #search agent working 
-    print("\n"+" ="*50)
-    print("step 1 - search agent is working ...")
-    print("="*50)
+    # Step 1: Search Agent
+    print("\n" + " =" * 50)
+    print("Step 1 - Search Agent is working...")
+    print("=" * 50)
 
     search_agent = build_search_agent()
     search_result = search_agent.invoke({
-        "messages" : [("user", f"Find recent, reliable and detailed information about: {topic}")]
+        "messages": [("user", f"Find recent, reliable and detailed information about: {topic}")]
     })
-    state["search_results"] = search_result['messages'][-1].content
+    state["search_results"] = extract_text(search_result['messages'][-1].content)
 
     print("\n search result ",state['search_results'])
 
@@ -31,7 +30,7 @@ def run_research_pipeline(topic : str) -> dict:
         )]
     })
 
-    state['scraped_content'] = reader_result['messages'][-1].content
+    state['scraped_content'] = extract_text(reader_result['messages'][-1].content)
 
     print("\nscraped content: \n", state['scraped_content'])
 
